@@ -17,7 +17,10 @@ func Processor() {
 		log.Println("request on /process end point of msgprocessorSvc")
 		processorHandler(c)
 	})
-
+	router.GET("/ping", func(c *gin.Context) {
+		log.Println("ping request on msgprocessorSvc")
+		c.JSON(http.StatusOK, gin.H{"message": "ping working on msgprocessorSvc"})
+	})
 	router.Run(":8081")
 
 }
