@@ -32,7 +32,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: anurag2911/msgprocessorSvc:latest  
+        tags: anurag2911/msgprocessorsvc:latest  
 
     - name: Verify pushed image
-      run: docker pull anurag2911/msgprocessorSvc:latest
+      run: docker pull anurag2911/msgprocessorsvc:latest
