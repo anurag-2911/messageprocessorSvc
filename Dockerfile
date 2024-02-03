@@ -15,7 +15,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o simpleMsgSvc ./cmd/app/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o msgprocessorsvc ./cmd/app/main.go
 
 ######## Start a new stage from scratch #######
 # Use a small Alpine Linux image to keep the image size down
@@ -26,10 +26,10 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/msgprocessorSvc .
+COPY --from=builder /app/msgprocessorsvc .
 
 # Expose port 8081 to the outside world
 EXPOSE 8081
 
 # Command to run the executable
-CMD ["./msgprocessorSvc"]
+CMD ["./msgprocessorsvc"]
