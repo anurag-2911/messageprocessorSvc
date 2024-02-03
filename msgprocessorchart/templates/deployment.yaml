@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-processing-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: message-processing-service
+  template:
+    metadata:
+      labels:
+        app: message-processing-service
+    spec:
+      containers:
+      - name: message-processing-service
+        image: anurag2911/msgprocessorsvc:latest
+        ports:
+        - containerPort: 8081
