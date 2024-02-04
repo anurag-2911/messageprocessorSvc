@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: message-processing-service
-        image: anurag2911/msgprocessorsvc:latest
+        image: anurag2911/msgprocessorsvc:2.0
         ports:
         - containerPort: 8081
         resources:
