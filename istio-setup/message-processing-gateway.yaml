@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: message-processing-gateway
+  namespace: default  # Use the namespace where service is deployed
+spec:
+  selector:
+    istio: ingressgateway # Use Istio's default ingress gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"  # This configures the gateway to accept traffic on all hostnames. Adjust as necessary.
