@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: message-processing-gateway
+  name: cluster-gateway # name of the gateway
   namespace: default  # Use the namespace where service is deployed
 spec:
   selector:
@@ -12,4 +12,4 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"  # This configures the gateway to accept traffic on all hostnames. Adjust as necessary.
+    - "*"  # This configures the gateway to accept traffic on all hostnames. Change as needed.
