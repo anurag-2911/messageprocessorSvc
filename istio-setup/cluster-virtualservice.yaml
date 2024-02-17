@@ -22,6 +22,6 @@ spec:
         prefix: "/message"  # Path for the microservice's endpoint
     route:
     - destination:
-        host: simple-msg-svc.default.svc.cluster.local  # this should matche the service's name and namespace
+        host: simple-msg-svc.default.svc.cluster.local  # this should match the service's name and namespace
         port:
           number: 80

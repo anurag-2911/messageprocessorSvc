@@ -1,0 +1,40 @@
+To revert the change and disable mutual TLS (mTLS) at the service-mesh level after having enabled it with the provided `PeerAuthentication` configuration, you have a couple of options depending on your desired state and security posture. You can either set mTLS to permissive mode, which allows services to accept both mTLS and plain text traffic, or you can completely remove the `PeerAuthentication` policy you applied. Here's how to do both:
+
+### 1. **Switching to Permissive Mode**
+
+If you want to allow services to accept both secure (mTLS) and insecure traffic, you can modify the `PeerAuthentication` policy to set the `mode` to `PERMISSIVE`. This approach is useful if you are in a transition phase or need to support clients that do not support mTLS.
+
+Update the `PeerAuthentication` policy by applying the following configuration:
+
+```yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: PERMISSIVE
+```
+
+You can apply this change with `kubectl apply -f <filename>.yaml`, where `<filename>.yaml` is the name of the file containing the above configuration.
+
+### 2. **Removing the `PeerAuthentication` Policy**
+
+If you decide to completely remove the mTLS policy and revert to the default Istio behavior (which could be PERMISSIVE or STRICT based on your Istio version and global mTLS settings), you can delete the `PeerAuthentication` policy you previously applied.
+
+To delete the policy, run:
+
+```sh
+kubectl delete peerauthentication default -n istio-system
+```
+
+This command removes the `PeerAuthentication` policy named `default` in the `istio-system` namespace, effectively undoing the mTLS configuration applied at the service-mesh level.
+
+### Additional Considerations
+
+- **Namespace and Service-Level Overrides**: If you have any namespace or service-level `PeerAuthentication` or `DestinationRule` configurations that enforce or modify mTLS settings, consider reviewing and adjusting those as well to ensure they align with your updated mesh-wide security posture.
+- **Impact on Services**: Changing mTLS configurations can affect how services within your mesh communicate with each other. Ensure that your services and any external clients are configured to handle the new security settings appropriately.
+- **Monitoring and Verification**: After making changes, monitor your services and use tools like Istio’s `istioctl` command-line tool or the Kiali dashboard to verify that the mTLS settings are applied as expected and that your services are communicating securely or as intended.
+
+By carefully managing your Istio `PeerAuthentication` policies, you can effectively control the mTLS configurations in your service mesh, adapting to your organization's changing security needs and requirements.
