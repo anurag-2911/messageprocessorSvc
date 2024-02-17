@@ -1,0 +1,83 @@
+
+
+The `prometheus.yaml` file is a Prometheus configuration file, 
+which defines how Prometheus should scrape metrics, 
+including the scrape intervals and job configurations. 
+
+
+`prometheus.yaml` file should be used by Prometheus itself. 
+When deploying Prometheus, particularly in a Kubernetes environment, 
+this configuration file is often mounted into the Prometheus pod using a ConfigMap. 
+
+
+
+### Step 1: Create a ConfigMap from the Prometheus Configuration
+
+1.Create a ConfigMap in Kubernetes that contains this file. 
+
+
+kubectl create configmap prometheus-config --from-file=prometheus.yaml -n istio-system
+
+
+This command creates a ConfigMap named `prometheus-config` in the `istio-system` 
+namespace (or whichever namespace to deploy Prometheus in).
+
+### Step 2: Deploy Prometheus using the ConfigMap
+
+When deploying Prometheus, you'll need to make sure the Prometheus deployment is configured to 
+use the `prometheus-config` ConfigMap as its configuration. 
+If you're deploying Prometheus manually using a Deployment manifest, 
+you would include a volume that mounts the ConfigMap into the container. 
+Here's an example snippet to include in your Prometheus deployment manifest:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.26.0
+        args:
+          - "--config.file=/etc/prometheus/prometheus.yaml"
+          - "--storage.tsdb.path=/prometheus/"
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus
+          readOnly: true
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: prometheus-config
+```
+
+This manifest assumes you are deploying Prometheus in the `istio-system` namespace 
+and mounts the `prometheus-config` ConfigMap to the Prometheus pod. 
+The Prometheus server is then configured to use the `prometheus.yaml` file from the mounted volume.
+
+### Step 3: Apply the Deployment Manifest
+
+After preparing your Prometheus deployment manifest that includes the ConfigMap volume, 
+apply it using `kubectl`:
+
+```sh
+kubectl apply -f prometheus-deployment.yaml
+```
+
+Ensure that the file name (`prometheus-deployment.yaml`) matches the name of your 
+file containing the deployment configuration.
+
+ 
+This approach allows Prometheus to use your custom configuration to scrape 
+metrics from your Istio service mesh and other targets as specified.

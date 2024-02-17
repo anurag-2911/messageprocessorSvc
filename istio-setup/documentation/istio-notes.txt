@@ -1,3 +1,11 @@
+
+##Kiali and Prometheus for Istio:
+
+https://istio.io/latest/docs/ops/integrations/prometheus/
+
+
+###TLS:
+
 To revert the change and disable mutual TLS (mTLS) at the service-mesh level 
 after having enabled it with the provided `PeerAuthentication` configuration, 
 you have a couple of options depending on your desired state and security posture. 
@@ -288,4 +296,10 @@ While Kube-proxy manages basic pod-to-pod communication within the Kubernetes cl
 Istio offers a rich set of features that allow for more sophisticated management of service interaction. 
 In essence, Istio builds upon and complements the foundational networking capabilities provided by Kube-proxy, 
 enabling developers and operators to manage, secure, and observe microservices more effectively.
+
+
+## kubectl and istioctl commands:
+
+kubectl get namespaces --show-labels
+
 

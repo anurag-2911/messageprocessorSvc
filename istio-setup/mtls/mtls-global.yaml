@@ -1,0 +1,12 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: PERMISSIVE
+    #To accept both secure (mTLS) and insecure traffic, PeerAuthentication policy,mode: PERMISSIVE
+    # To accept secure traffic, mode:STRICT
+    # which allows a service to accept both plain text and mTLS traffic. 
+    # This can be useful for gradually migrating services to mTLS.

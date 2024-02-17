@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.26.0
+        args:
+          - "--config.file=/etc/prometheus/prometheus.yaml"
+          - "--storage.tsdb.path=/prometheus/"
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: prometheus-config
