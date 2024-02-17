@@ -1,0 +1,9 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  addonComponents:
+    kiali:
+      enabled: true
+  values:
+    kiali:
+      createDemoSecret: true # Only for demo purposes. For production, use proper security practices.
