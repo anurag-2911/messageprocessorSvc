@@ -11,7 +11,8 @@ after having enabled it with the provided `PeerAuthentication` configuration,
 you have a couple of options depending on your desired state and security posture. 
 You can either set mTLS to permissive mode, 
 which allows services to accept both mTLS and plain text traffic, 
-or you can completely remove the `PeerAuthentication` policy you applied. Here's how to do both:
+or you can completely remove the `PeerAuthentication` policy you applied. 
+Here's how to do both:
 
 ### 1. **Switching to Permissive Mode**
 
@@ -78,10 +79,13 @@ communications in a microservices architecture,
 often within a cloud-native environment. 
 
 It operates at the application layer (Layer 7 in the OSI model) 
-and provides a way to control how different parts of an application share data with one another. 
-Unlike traditional monolithic architectures where all processes run within the same application, 
+and provides a way to control how different parts of an application share data 
+with one another. 
+Unlike traditional monolithic architectures where all processes run 
+within the same application, 
 microservices architectures split these processes into smaller, 
-independently deployable services. This approach offers flexibility, scalability, and resilience 
+independently deployable services. This approach offers flexibility, 
+scalability, and resilience 
 but introduces complexity in service-to-service communication. 
 
 A service mesh addresses this complexity by providing a variety of features:
@@ -102,7 +106,8 @@ A service mesh addresses this complexity by providing a variety of features:
 - **Observability**: Provides detailed insights into services, including logging, tracing, 
     and metrics, 
 	which are crucial for monitoring and troubleshooting.
-- **Fault Injection and Rate Limiting**: Tests the resilience of the system and prevents services 
+- **Fault Injection and Rate Limiting**: Tests the resilience of the 
+system and prevents services 
 	from being overwhelmed by traffic.
 
 ### Why Service Mesh is Needed
@@ -112,18 +117,24 @@ the operational complexity of managing service-to-service communications.
 As the number of services grows, it becomes challenging to ensure they interact securely, 
 efficiently, and reliably. Here are the primary reasons why a service mesh is needed:
 
-- **Complexity Management**: A service mesh abstracts the complexity of network management away 
+- **Complexity Management**: A service mesh abstracts the complexity of 
+network management away 
 	from the application code. 
 Developers can focus on business logic rather than network communication.
-- **Consistent Policy Enforcement**: It ensures consistent implementation of security policies, 
-traffic rules, and compliance requirements across all services without modifying service code.
+- **Consistent Policy Enforcement**: It ensures consistent implementation 
+of security policies, 
+traffic rules, and compliance requirements across all services without 
+modifying service code.
 - **Improved Security**: By handling secure communication, identity verification, and 
 	access control at the infrastructure level, 
 a service mesh enhances the overall security posture of the application.
 - **Operational Agility**: Enables quick and safe changes to the application environment, 
-such as rolling updates, testing, and traffic shifting, without direct changes to service code.
-- **Enhanced Observability**: Provides deep visibility into the behavior of services and their interactions, 
-which is essential for diagnosing issues, monitoring performance, and understanding the effects of changes.
+such as rolling updates, testing, and traffic shifting, without direct 
+changes to service code.
+- **Enhanced Observability**: Provides deep visibility into the 
+behavior of services and their interactions, 
+which is essential for diagnosing issues, monitoring performance, 
+and understanding the effects of changes.
 
 ### Conclusion
 
@@ -147,7 +158,8 @@ istioctl version
 istioctl verify-install
 istioctl manifest apply --set profile=demo
 
-(This will install the Istio 1.20.2 "demo" profile (with components: Istio core, Istiod, Ingress gateways, 
+(This will install the Istio 1.20.2 "demo" profile (with components: Istio core, 
+Istiod, Ingress gateways, 
 and Egress gateways) into the cluster.
  Proceed? (y/N) y
 ✔ Istio core installed
@@ -223,8 +235,10 @@ istioctl proxy-status
 2. Analyze the Istio Configuration for Potential Issues
 istioctl analyze
 3. kubectl get pods -n istio-system
-4. To further diagnose issues or check the operational logs of the Istio control plane components, 
-	use kubectl logs. For example, to check the logs of the istiod pod, first find the pod name:
+4. To further diagnose issues or check the operational logs of the Istio control 
+plane components, 
+	use kubectl logs. For example, to check the logs of the istiod pod, 
+	first find the pod name:
 	
 kubectl get pods -n istio-system -l app=istiod
 kubectl logs istiod-7d4d6677c5-bl4v5 -n istio-system
@@ -245,36 +259,47 @@ within Kubernetes clusters.
 
 ### Kube-proxy
 
-Kube-proxy is a fundamental component of Kubernetes, responsible for part of the networking layer that allows 
+Kube-proxy is a fundamental component of Kubernetes, responsible for 
+part of the networking layer that allows 
 pods to communicate 
 with each other and with the outside world. It operates at the IP level and is responsible 
 for routing traffic to the correct pod based on IP and port number, 
 employing iptables (or IPVS in some configurations) to manage network routing rules. 
 Here are the key functions of Kube-proxy:
 
-- **Service Abstraction**: Kube-proxy watches the Kubernetes API for the addition and removal of services 
-and endpoints and updates the routing rules accordingly. This process abstracts the IP addresses of a 
+- **Service Abstraction**: Kube-proxy watches the Kubernetes API for 
+the addition and removal of services 
+and endpoints and updates the routing rules accordingly. This process 
+abstracts the IP addresses of a 
 set of pods behind a single DNS name.
-- **Load Balancing**: It provides simple load balancing across the pods that are part of a service, 
+- **Load Balancing**: It provides simple load balancing across the pods 
+that are part of a service, 
 though it's relatively basic compared to dedicated load balancers.
-- **Networking**: Manages the network rules on nodes to allow network communication to and from pods.
+- **Networking**: Manages the network rules on nodes to allow network 
+communication to and from pods.
 
 ### Istio
 
 Istio, on the other hand, is a service mesh that operates at a higher level, 
 providing a comprehensive suite of networking features designed to connect, 
 secure, control, and observe services. 
-Unlike Kube-proxy, which operates at the IP level, Istio works at the application layer (Layer 7), 
-offering more granular control over traffic. Here are some of the key features of Istio:
+Unlike Kube-proxy, which operates at the IP level, Istio works at the 
+application layer (Layer 7), 
+offering more granular control over traffic. Here are some of the key 
+features of Istio:
 
-- **Advanced Traffic Management**: Offers sophisticated traffic routing rules, such as canary deployments, 
+- **Advanced Traffic Management**: Offers sophisticated traffic routing 
+rules, such as canary deployments, 
 A/B testing, and blue-green deployments, 
 	based on HTTP headers and weights.
-- **Security**: Provides strong security features, including mutual TLS for service-to-service encryption, 
+- **Security**: Provides strong security features, including mutual TLS 
+for service-to-service encryption, 
 fine-grained access control policies, and automated certificate management.
-- **Observability**: Includes tools for monitoring, logging, and tracing, allowing operators to 
+- **Observability**: Includes tools for monitoring, logging, and tracing, 
+allowing operators to 
 	observe the behavior of services and their interactions within the mesh.
-- **Service Identity and Security**: Assigns a unique identity to each service in the mesh and 
+- **Service Identity and Security**: Assigns a unique identity to 
+each service in the mesh and 
 	uses this identity for service-to-service authentication and authorization.
 
 ### Differences and Complementarity
@@ -282,10 +307,13 @@ fine-grained access control policies, and automated certificate management.
 - **Scope and Level of Operation**: Kube-proxy is a basic component of Kubernetes networking, 
 focusing on IP-level routing and load balancing. 
 Istio provides a layer on top of the basic networking provided by Kubernetes, 
-offering advanced traffic management, security, and observability features at the application level.
-- **Traffic Control Capabilities**: Kube-proxy's capabilities are limited to simple load balancing 
+offering advanced traffic management, security, and observability 
+features at the application level.
+- **Traffic Control Capabilities**: Kube-proxy's capabilities are 
+limited to simple load balancing 
 	and basic service discovery. 
-Istio, however, enables complex routing, resilience strategies (like retries, circuit breaking), 
+Istio, however, enables complex routing, resilience strategies 
+(like retries, circuit breaking), 
 and fine-grained control over traffic flow.
 - **Security and Observability**: Istio extends the functionality beyond 
 	what Kube-proxy offers by providing mutual TLS, 
@@ -293,9 +321,12 @@ and fine-grained control over traffic flow.
 	logs, and traces for services in the mesh.
 
 While Kube-proxy manages basic pod-to-pod communication within the Kubernetes cluster, 
-Istio offers a rich set of features that allow for more sophisticated management of service interaction. 
-In essence, Istio builds upon and complements the foundational networking capabilities provided by Kube-proxy, 
-enabling developers and operators to manage, secure, and observe microservices more effectively.
+Istio offers a rich set of features that allow for more 
+sophisticated management of service interaction. 
+In essence, Istio builds upon and complements the foundational 
+networking capabilities provided by Kube-proxy, 
+enabling developers and operators to manage, secure, and observe 
+microservices more effectively.
 
 
 ## kubectl and istioctl commands:
