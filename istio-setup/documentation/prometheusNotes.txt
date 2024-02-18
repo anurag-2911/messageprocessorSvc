@@ -1,4 +1,7 @@
-
+To check Prometheus UI:
+kubectl port-forward svc/prometheus 9090:9090 -n istio-system
+and then access the url at
+http://localhost:9090
 
 The `prometheus.yaml` file is a Prometheus configuration file, 
 which defines how Prometheus should scrape metrics, 
