@@ -91,3 +91,22 @@ by using the Helm chart provided by Elastic. First, add the Elastic Helm charts 
 - **Monitoring and Management**: Consider setting up monitoring for the 
     EFK stack to ensure its health and performance.
 
+
+
+helm install elasticsearch elastic/elasticsearch --namespace logging --create-namespace
+NAME: elasticsearch
+LAST DEPLOYED: Mon Feb 19 00:19:42 2024
+NAMESPACE: logging
+STATUS: deployed
+REVISION: 1
+NOTES:
+1. Watch all cluster members come up.
+  $ kubectl get pods --namespace=logging -l app=elasticsearch-master -w
+2. Retrieve elastic user's password.
+  $ kubectl get secrets --namespace=logging elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+3. Test cluster health using Helm test.
+  $ helm --namespace=logging test elasticsearch
+
+
+
+
