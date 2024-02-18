@@ -1,0 +1,9 @@
+Commands:
+
+Use port forwarding to access the Kiali UI:
+
+kubectl port-forward svc/kiali -n istio-system 20001:20001
+
+istioctl dashboard kiali
+
+

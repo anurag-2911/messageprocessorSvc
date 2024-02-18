@@ -1,0 +1,98 @@
+In an Istio service mesh, when mutual TLS (mTLS) is enforced with a `STRICT` mode policy, 
+all service-to-service communication must be over TLS, 
+ensuring secure service communication. 
+If a service doesn't adhere to these mTLS requirements 
+(for example, if it tries to communicate without TLS), 
+the communication will be blocked by Istio. 
+To check if service-to-service communication is being blocked due to the `STRICT` mTLS mode, 
+perform the following steps:
+
+### 1. Check mTLS Configuration
+
+First, verify the mTLS settings for your services. 
+Istio allows to configure mTLS at different levels 
+(mesh-wide, namespace-level, or service-level). To see if `STRICT` mTLS is applied, 
+look at `PeerAuthentication` policies.
+
+- **Mesh-wide Configuration**:
+
+
+kubectl get peerauthentications --all-namespaces
+
+
+- **Namespace-level and Service-level**:
+
+
+kubectl get peerauthentications -n <namespace>
+
+
+If `PeerAuthentication` policy is with `mode: STRICT`, 
+it means mTLS is enforced for the services in the scope of that policy.
+
+### 2. Test Service-to-Service Communication
+
+To explicitly test if the communication is being blocked by mTLS, 
+attempt to make a direct HTTP request from one pod to another and observe if the communication fails.
+
+- **Exec into a Pod**:
+
+
+kubectl exec -it <source-pod-name> -n <namespace> -- /bin/bash
+```
+
+- **Attempt an HTTP Request**:
+
+
+curl http://<destination-service>.<namespace>.svc.cluster.local
+
+
+In `STRICT` mTLS mode, such a plain HTTP request should fail because mTLS is required.
+
+### 3. Review Istio Proxy Logs
+
+The Envoy proxy logs can provide insights into why the communication might be failing. 
+Look for denied requests or TLS errors in the logs of the Istio sidecar for the source 
+or destination service.
+
+- **Check logs for the source pod's sidecar**:
+
+
+kubectl logs <source-pod-name> -n <namespace> -c istio-proxy
+
+
+- **Check logs for the destination pod's sidecar**:
+
+
+kubectl logs <destination-pod-name> -n <namespace> -c istio-proxy
+
+
+### 4. Use Istio Tools
+
+Istio provides tools like `istioctl` to analyze the mesh configuration and identify potential issues.
+
+- **Analyze your Istio configuration**:
+
+
+istioctl analyze -n <namespace>
+
+
+This command scans the namespace for potential issues and misconfigurations, 
+including mTLS-related problems.
+
+### 5. Check Kiali Dashboard
+
+If you have Kiali installed, it's an excellent way to visually inspect the mTLS status between services. 
+Kiali shows which services communicate with mTLS enabled, 
+helping to identify any service not complying with the `STRICT` mTLS policy.
+
+To access Kiali:
+
+- Use port forwarding to access the Kiali UI:
+
+
+kubectl port-forward svc/kiali -n istio-system 20001:20001
+
+
+- Open `http://localhost:20001` in your browser and navigate to the "Graph" section 
+to see the mTLS status.
+

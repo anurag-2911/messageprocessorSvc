@@ -3,7 +3,7 @@ package api
 import (
 	"log"
 	"net/http"
-
+	"github.com/zsais/go-gin-prometheus"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +13,13 @@ type Message struct {
 
 func Processor() {
 	router := gin.Default()
+	/*
+	This code adds Prometheus middleware to the Gin application, 
+	which will automatically expose metrics at /metrics endpoint for Prometheus to scrape
+	*/
+	p := ginprometheus.NewPrometheus("gin")
+	p.Use(router)
+
 	router.POST("/process", func(c *gin.Context) {
 		log.Println("request on /process end point of msgprocessorSvc")
 		processorHandler(c)
