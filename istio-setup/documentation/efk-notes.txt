@@ -1,0 +1,93 @@
+Setting up an EFK (Elasticsearch, Fluentd, and Kibana) stack in a Kubernetes cluster with 
+Istio service mesh involves deploying each component of the stack and 
+then configuring them to work together. 
+This setup allows to aggregate, visualize, and analyze logs from microservices.
+
+
+### Step 1: Deploy Elasticsearch
+
+1. **Using Helm** (recommended): The easiest way to deploy Elasticsearch is 
+by using the Helm chart provided by Elastic. First, add the Elastic Helm charts repository:
+
+   
+   helm repo add elastic https://helm.elastic.co
+   helm repo update
+  
+
+2. Deploy Elasticsearch:
+   
+   helm install elasticsearch elastic/elasticsearch --namespace logging --create-namespace   
+
+   Adjust the command based on specific requirements (e.g., resource limits, number of nodes).
+
+### Step 2: Deploy Fluentd
+
+1. **Create a Fluentd configuration**: create a Fluentd configuration that tailors the 
+    logs from Kubernetes cluster and forwards them to Elasticsearch. 
+    Create a `ConfigMap` with the Fluentd configuration. 
+    Here is an example command to create the `ConfigMap`:
+
+   
+   kubectl create configmap fluentd-config --from-file=fluentd-config.yaml --namespace logging
+   
+
+   `fluentd-config.yaml` should include the necessary configuration 
+   to read logs from the desired sources and output them to the Elasticsearch service.
+
+2. **Deploy Fluentd**: Deploy Fluentd as a DaemonSet to ensure it runs on every node. 
+    Create a Fluentd deployment YAML (`fluentd-daemonset.yaml`) that references 
+    the `ConfigMap` and sets up Fluentd to send logs to Elasticsearch.
+
+3. Apply the Fluentd DaemonSet:  
+   kubectl apply -f fluentd-daemonset.yaml --namespace logging
+  
+
+### Step 3: Deploy Kibana
+
+1. **Using Helm**: Deploy Kibana to visualize the logs stored in Elasticsearch.
+    helm install kibana elastic/kibana --namespace logging
+   
+
+2. **Configure access to Kibana**: To access Kibana via an Ingress or by port-forwarding. 
+    For a quick access, use `kubectl port-forward`:
+
+   
+   kubectl port-forward deployment/kibana-kibana 5601:5601 --namespace logging
+  
+
+   Then, access Kibana at `http://localhost:5601`.
+
+### Step 4: Configure Istio for Logging
+
+1. **Enable Envoy’s access logging**: 
+    Configure Istio to send access logs to stdout so Fluentd can capture them. 
+    This can be done by setting the `MeshConfig` accessLogFile parameter:
+
+   
+   kubectl edit configmap istio -n istio-system
+  
+
+   Add the following line under the `data` section:
+
+  
+   mesh: |-
+     accessLogFile: "/dev/stdout"
+ 
+
+2. **Restart Istio components** to apply the changes.
+
+### Step 5: Verify the Setup
+
+1. **Generate traffic** in your mesh to produce logs.
+2. **Check Elasticsearch** to see if logs are being collected. 
+    Use Kibana to create visualizations and dashboards based on your logs.
+
+### Considerations
+
+- **Security**: Ensure your Elasticsearch and Kibana instances are secured appropriately. 
+    Consider using Elasticsearch's built-in security features or Kubernetes network policies.
+- **Customization**: You may need to customize your Fluentd configuration 
+    further to suit your logging requirements.
+- **Monitoring and Management**: Consider setting up monitoring for the 
+    EFK stack to ensure its health and performance.
+

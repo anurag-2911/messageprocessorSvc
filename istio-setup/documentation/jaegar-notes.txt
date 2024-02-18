@@ -1,0 +1,81 @@
+If Jaeger is not present in your Istio service mesh setup, 
+manually add it for tracing support. 
+This involves deploying Jaeger into your Istio system namespace and configuring Istio to use 
+Jaeger for tracing. Here's how you can do it:
+
+### Step 1: Deploy Jaeger
+
+deploy Jaeger using the official Jaeger Kubernetes templates or through the Istio addon method. 
+For simplicity and integration, we'll use the Istio method here.
+
+1. **Download the Jaeger Installation YAML**: 
+Istio provides sample configurations for addons, including Jaeger. 
+Download the Jaeger installation YAML file from the Istio GitHub repository.
+
+   
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/addons/jaeger.yaml -n istio-system
+
+
+This command downloads and applies the Jaeger deployment and service configuration to `istio-system` 
+namespace.
+
+2. **Wait for Jaeger Pods to become ready**: After applying the YAML, 
+ensure the Jaeger pods are up and running:
+
+   
+kubectl get pods -n istio-system | grep jaeger
+   
+
+Check the Jaeger pods listed as running.
+
+### Step 2: Configure Istio to Use Jaeger
+
+After deploying Jaeger, ensure that Istio is configured to send trace data to Jaeger.
+
+1. **Edit Istio ConfigMap**: This involves modifying the Istio configuration to point to the 
+Jaeger service for tracing.
+
+kubectl edit configmap istio -n istio-system
+  
+
+2. **Set Tracing Address**: In the `istio` ConfigMap, find the tracing configuration section 
+and set the `zipkin` address to your Jaeger service URL, 
+typically `jaeger-collector.istio-system:9411`.
+
+3. **Restart Istio components**: For the changes to take effect, 
+restart the Istio components, particularly `istiod`:
+
+kubectl rollout restart deployment/istiod -n istio-system
+   
+
+### Step 3: Access Jaeger Dashboard
+
+Once Jaeger is deployed and configured, access its dashboard to view traces.
+
+1. **Port Forward Jaeger UI**: Use `kubectl port-forward` to access the Jaeger dashboard locally:
+
+kubectl port-forward svc/tracing -n istio-system 8080:80
+
+   
+
+2. **Access Dashboard**: Open web browser and go to `http://localhost:8080` 
+to access the Jaeger UI.
+
+### Step 4: Verify Tracing
+
+To ensure everything is set up correctly:
+
+1. Generate some traffic to your services within the mesh.
+2. Check the Jaeger UI for traces.
+
+### Troubleshooting
+
+- **Ensure all services have sidecars**: 
+    For Jaeger to trace requests, all services must have Istio sidecars injected.
+- **Check sampling rate**: Make sure the sampling rate is configured to 
+    capture the traces you're interested in.
+- **Review Istio and Jaeger logs**: If traces aren't appearing, 
+    check the logs for `istiod` and the Jaeger pods for any errors or warnings.
+
+This setup should integrate Jaeger into your Istio service mesh, 
+enabling trace service interactions within the Kubernetes cluster.
