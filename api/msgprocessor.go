@@ -1,10 +1,10 @@
 package api
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/zsais/go-gin-prometheus"
 	"log"
 	"net/http"
-	"github.com/zsais/go-gin-prometheus"
-	"github.com/gin-gonic/gin"
 )
 
 type Message struct {
@@ -14,8 +14,8 @@ type Message struct {
 func Processor() {
 	router := gin.Default()
 	/*
-	This code adds Prometheus middleware to the Gin application, 
-	which will automatically expose metrics at /metrics endpoint for Prometheus to scrape
+		This code adds Prometheus middleware to the Gin application,
+		which will automatically expose metrics at /metrics endpoint for Prometheus to scrape
 	*/
 	p := ginprometheus.NewPrometheus("gin")
 	p.Use(router)
