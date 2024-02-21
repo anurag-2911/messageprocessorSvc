@@ -1,3 +1,4 @@
+kubectl port-forward svc/tracing -n istio-system 8080:80
 If Jaeger is not present in your Istio service mesh setup, 
 manually add it for tracing support. 
 This involves deploying Jaeger into your Istio system namespace and configuring Istio to use 
